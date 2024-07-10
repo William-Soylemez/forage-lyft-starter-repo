@@ -5,6 +5,8 @@ from battery.spindler_battery import SpindlerBattery
 from engine.capulet_engine import CapuletEngine
 from engine.sternman_engine import SternmanEngine
 from engine.willoughby_engine import WilloughbyEngine
+from tires.carrigan_tires import CarriganTires
+from tires.octoprime_tires import OctoprimeTires
 
 
 class TestNubbinBattery(unittest.TestCase):
@@ -37,19 +39,19 @@ class TestSpindler(unittest.TestCase):
         self.assertEqual(battery.needs_service(), age > max_age)
 
     def test_new_battery(self):
-        self.create_and_test_battery(0, 2)
+        self.create_and_test_battery(0, 3)
     
     def test_one_year_old_battery(self):
-        self.create_and_test_battery(1, 2)
+        self.create_and_test_battery(1, 3)
 
     def test_two_year_old_battery(self):
-        self.create_and_test_battery(2, 2)
+        self.create_and_test_battery(2, 3)
     
     def test_four_year_old_battery(self):
-        self.create_and_test_battery(4, 2)
+        self.create_and_test_battery(4, 3)
     
     def test_five_year_old_battery(self):
-        self.create_and_test_battery(5, 2)
+        self.create_and_test_battery(5, 3)
 
 class TestCapuletEngine(unittest.TestCase):
     def create_and_test_engine(self, mileage, last_service_mileage, max_mileage):
@@ -111,8 +113,27 @@ class TestSternmanEngine(unittest.TestCase):
     def test_does_not_need_service(self):
         self.create_and_test_engine(False)
 
+class TestCarriganTires(unittest.TestCase):
+    def create_and_test_tires(self, wear_array):
+        tires = CarriganTires(wear_array)
+        self.assertEqual(tires.needs_service(), max(wear_array) >= 0.9)
     
+    def test_needs_service(self):
+        self.create_and_test_tires([0.8, 0.9, 0.8, 0.8])
+    
+    def test_does_not_need_service(self):
+        self.create_and_test_tires([0.8, 0.8, 0.8, 0.8])
 
+class TestOctoprimeTires(unittest.TestCase):
+    def create_and_test_tires(self, wear_array):
+        tires = OctoprimeTires(wear_array)
+        self.assertEqual(tires.needs_service(), sum(wear_array) >= 3)
+    
+    def test_needs_service(self):
+        self.create_and_test_tires([0.7, 0.7, 0.8, 0.8])
+    
+    def test_does_not_need_service(self):
+        self.create_and_test_tires([0.7, 0.7, 0.7, 0.7])
 
 if __name__ == '__main__':
     unittest.main()
